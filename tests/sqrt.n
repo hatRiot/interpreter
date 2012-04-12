@@ -1,0 +1,20 @@
+Func sqrt( num )
+	n = 0;
+	IF ( EQ(num, n)) to endit;
+	N = num / 2 + 1;
+ 	N1 = (n + (num/n)) / 2;
+// this is a while loop
+Again: IF ( GE(n1, n)) to endit;
+	n = n1;
+	N1 = (n + (num/n)) / 2;
+	IF ( TRUE ) to again;
+Endit: sqrt = n; 
+Endfunc
+
+Func main()
+	Write( "Enter a number: " );
+	Read ( X );
+	S = sqrt( X );
+	Write ( "The square root is:");
+	Write ( S );
+Endfunc

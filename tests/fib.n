@@ -1,0 +1,15 @@
+Func main()
+	n = 13;  // this is the fibonacci number we want
+	Write("Fib of: " );
+	Write(n)
+	a = 0;
+	b = 1;
+	i = 1;
+Again: IF(GT(i, n)) to Endit;
+	c = a;
+	a = b;
+	b = c + b;
+	i = i + 1;	// i don't have a ++ operator so, gotta do it old school
+	IF ( TRUE ) to Again;
+Endit: Write(a);
+Endfunc

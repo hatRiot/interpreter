@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+# wraps the 'java -jar nectj-builder.jar test.n' command for you
+#
+
+if [ -e "$1" ]; then
+	java -jar nectj-build.jar $1
+else
+	echo "That file doesn't seem to exist, Bill."
+fi
