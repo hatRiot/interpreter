@@ -1,0 +1,32 @@
+// Calculate the area of a circle using the ever popular NECTJ language.
+
+func main()
+    num = 2;
+    denom = 1;
+    result = 200000;
+    i = 0;
+    max=100;
+  again: 
+    if(gt(i,max)) 
+        to done;
+    result=result*num/denom;
+    denom = denom + 2;
+    result=result*num/denom;
+    num = num + 2;
+    i = i + 1;
+    if (true) 
+    to again;
+
+  done:
+    write( result );
+    write( "Enter the diameter of a circle: ");
+    read( diam );
+    area = result * 
+           ( diam / 2 ) * 
+           ( diam / 2 );
+    write( "Area is: " );
+    area = area / 100000;
+    write( area );
+
+endfunc
+

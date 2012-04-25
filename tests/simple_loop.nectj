@@ -1,0 +1,14 @@
+// Here is another NECTJ test file.
+// If you enter a number, the program counts from zero to that number.
+
+func main()
+	write( "Enter a number:" );
+	read( X );
+	i = 0;
+loop:	if ( ge( i, x ) ) to done;
+	write( i );
+	i = i + 1;
+	if ( true ) to loop;
+done:	write( "We counted to that number!" );
+endfunc
+

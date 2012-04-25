@@ -52,6 +52,10 @@ public class Parser
 		// initialize the local tokens list with 
 		// the passed token list
 		this.tokens = tmp;
+		
+		// build me function templates
+		templateFunctions();
+		
 		try
 		{
 			// start parsing the list
@@ -75,21 +79,60 @@ public class Parser
 		// set the current position to the main statement, no matter
 		// where it's at in the code
 		pos = main;
+
 		//
 		// execute the statements!  This needs to be done this way because of the
 		// jumps in execution; i.e. if and return and stuff
 		//
 		while ( pos < tokens.size())
 		{
+			//printVars();
 			int current = pos;
 			if ( current >= statements.size() )
 				break;
-			
+				
 			pos++;
 			statements.get(current).execute();
 		}
 	}
-
+	
+	private void printVars()
+	{
+		System.out.println ( " *** VARS");
+		Iterator it = variables.entrySet().iterator();
+		while ( it.hasNext())
+		{
+			Map.Entry pairs = (Map.Entry)it.next();
+			System.out.println ( pairs.getKey() + " = " + pairs.getValue() );
+			//it.remove();
+		}
+	}
+	// 
+	// I realized my previous design would break if main() was the first function seen and
+	// made calls to other functions, so i had to implement a really hacky workaround.  Basically i 
+	// go and look for functions BEFORE parsing, that way i have the templates set up.  When I do, then,
+	// see a function, I just need to update its position.  And the calls in main() to methods up aways
+	// get their calls updated when i run across the function later on.  So there.
+	//
+	private void templateFunctions()
+	{
+		for ( int i = 0; i < tokens.size(); ++i )
+		{
+			if ( tokens.get(i).getTag() == TokenTag.FUNC )
+			{
+				Function function;
+				function = new Function ( tokens.get(i+1).getValue(),
+												-1);
+				i++; // shoot over the (
+				while ( tokens.get(i).getTag() == TokenTag.VARIABLE)
+				{
+					function.addVar ( tokens.get(i++) );
+				}
+				functions.put ( function.getName(), function );
+				i++; // shoot over the )
+			}
+		}
+	}
 	// this method starts parsing the tokens, and doesn't 
 	// stop until I declare it so
 	private void parse()
@@ -147,22 +190,48 @@ public class Parser
 			}
 			else if ( match(TokenTag.FUNC) )
 			{
-				Function function;
-				
-				function = new Function ( consume(TokenTag.FUNC).getValue(),
-										  statements.size() );
-				// main function position
-				if ( lookBack(1).getValue().equals("main"))
-					main = statements.size();
-				consume(TokenTag.LPARA);
-				// match variables only; we don't accept ints
-				while ( match(TokenTag.VARIABLE))
+				// if we already have the 'template' for the function, then we really just need to
+				// update its position
+				if ( functions.containsKey(consume(TokenTag.FUNC).getValue()))
 				{
-					function.addVar ( lookBack(1) );
+					consume(TokenTag.LPARA);
+					// get the function template
+					Function f = functions.get(lookBack(2).getValue());
+					// set the position of it
+					f.setPosition ( statements.size() );
+					// update
+					functions.put(f.getName(), f );
+					// update main pos
+					if ( f.getName().equals("main"))
+						main = statements.size();
+					// get variables and stuff
+					while ( match(TokenTag.VARIABLE)) 
+					{
+						f.addVar( lookBack(1) );
+					}
+
+					consume(TokenTag.RPARA);
+					// so now we ALSO must update the function calls
+					updateFunctionCall(f.getName(), statements.size());
 				}
-				// add the func and purge the rpara
-				functions.put ( function.getName(), function );
-				consume(TokenTag.RPARA);
+				else
+				{
+					Function function;
+					function = new Function ( consume(TokenTag.FUNC).getValue(),
+										  statements.size() );
+					// main function position
+					if ( lookBack(1).getValue().equals("main"))
+						main = statements.size();
+					consume(TokenTag.LPARA);
+					// match variables only; we don't accept ints
+					while ( match(TokenTag.VARIABLE))
+					{
+						function.addVar ( lookBack(1) );
+					}
+					// add the func and purge the rpara
+					functions.put ( function.getName(), function );
+					consume(TokenTag.RPARA);
+				}
 			}
 			else if ( match(TokenTag.ENDFUNC) )
 			{
@@ -174,6 +243,24 @@ public class Parser
 		}	
 	}
 
+	// I have to do some black magic because i was unaware of some stipulations up front
+	// so this is a little hacky workdaround; this updates FunctionCalls in the statement list
+	// with proper function positions
+	private void updateFunctionCall(String f, int p)
+	{
+		for ( int i = 0; i < statements.size(); ++i )
+		{
+			if ( statements.get(i) instanceof FunctionCall)
+			{
+				FunctionCall func = (FunctionCall)statements.get(i);
+				if ( func.getFunc().equals(f)){
+					statements.remove(i);
+					func.updatePosition ( p );
+					statements.add(i, func);
+				}
+			}
+		}
+	}
 	// match a function call.  This is here because there are two separate ways
 	// we can call a function.  A) just by itself, func(), or as an assignment, S = func().
 	private void matchFunctionCall ( )
@@ -606,7 +693,8 @@ public class Parser
 		private String func;
 		private int p;
 		private Stack<Token> call_vars = new Stack<Token>();
-		
+		private ArrayList<Token> call_vars_stat = new ArrayList<Token>();
+
 		public FunctionCall() {}
 
 		public FunctionCall ( String f, int p )
@@ -618,10 +706,37 @@ public class Parser
 		public void addVar ( Token t )
 		{
 			call_vars.push ( t );
+			call_vars_stat.add ( t );
 		}
-
+		
+		// update the position of the function call
+		public void updatePosition ( int p )
+		{
+			this.p = p;
+		}
+		
+		public String getFunc(){
+			return func;
+		}
+		
 		public void execute()
 		{
+			// this'll happen if we're calling functions in a loop; repopulate the stack!
+			if ( call_vars.empty() )
+			{
+				for ( Token t : call_vars_stat )
+					call_vars.push(t);
+			}
+			
+			// repopulate the receiving function's var stack!
+			Function f = functions.get(func);
+			if ( f.getVarCount() <= 0 )
+			{
+				ArrayList<Token> tmp = f.getCallVars();
+				for ( Token t : tmp )
+					f.addVar ( t );
+			}
+
 			// pop vars off the called function's object stack and assign them to the caller's
 			// passed tokens.  so test(4, 5) calling Func test ( m, n ), m = 4 and n = 5
 			while ( !call_vars.empty() && call_vars.peek() != null )

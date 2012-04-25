@@ -216,33 +216,33 @@ public class TheScan
 						tag = TokenTag.NONE;
 						i--;
 					}
-					else if ( current.equals("Endfunc") )
+					else if ( current.equalsIgnoreCase("Endfunc") )
 					{
 						tokens.add(new Token(current, TokenTag.ENDFUNC));
 						current = "";
 						tag = TokenTag.NONE;
 					}
-					else if ( current.equals("Write"))
+					else if ( current.equalsIgnoreCase("Write"))
 					{
 						//add 'Write' token
 						tokens.add(new Token(current, TokenTag.WRITE));
 						current = "";
 						tag = TokenTag.NONE;
 					}
-					else if ( current.equals("Read"))
+					else if ( current.equalsIgnoreCase("Read"))
 					{
 						// add 'Read' token
 						tokens.add(new Token(current, TokenTag.READ));
 						current = "";
 						tag = TokenTag.NONE;
 					}
-					else if ( current.equals("IF"))
+					else if ( current.equalsIgnoreCase("IF"))
 					{
 						tokens.add(new Token(current, TokenTag.IF));
 						current = "";
 						tag = TokenTag.NONE;
 					}
-					else if ( current.equals("EQ"))
+					else if ( current.equalsIgnoreCase("EQ"))
 					{
 						tokens.add(new Token(current, TokenTag.EQ));
 						current = "";
@@ -254,49 +254,49 @@ public class TheScan
 						current = "";
 						tag = TokenTag.NONE;
 					}
-					else if ( current.equals("GE"))
+					else if ( current.equalsIgnoreCase("GE"))
 					{
 						tokens.add(new Token(current, TokenTag.GE));
 						current = "";
 						tag = TokenTag.NONE;
 					}
-					else if ( current.equals("LT"))
+					else if ( current.equalsIgnoreCase("LT"))
 					{
 						tokens.add(new Token(current, TokenTag.LT));
 						current = "";
 						tag = TokenTag.NONE;
 					}
-					else if ( current.equals("NE"))
+					else if ( current.equalsIgnoreCase("NE"))
 					{
 						tokens.add(new Token(current, TokenTag.NE));
 						current = "";
 						tag = TokenTag.NONE;
 					}
-					else if ( current.equals("GT"))
+					else if ( current.equalsIgnoreCase("GT"))
 					{
 						tokens.add(new Token(current, TokenTag.GT));
 						current = "";
 						tag = TokenTag.NONE;
 					}
-					else if ( current.equals("LE" ))
+					else if ( current.equalsIgnoreCase("LE" ))
 					{
 						tokens.add(new Token(current, TokenTag.LE));
 						current = "";
 						tag = TokenTag.NONE;
 					}
-					else if ( current.equals("TRUE"))
+					else if ( current.equalsIgnoreCase("TRUE"))
 					{
 						tokens.add(new Token(current, TokenTag.TRUE));
 						current = "";
 						tag = TokenTag.NONE;
 					}
-					else if ( current.equals("FALSE"))
+					else if ( current.equalsIgnoreCase("FALSE"))
 					{
 						tokens.add(new Token(current, TokenTag.FALSE));
 						current = "";
 						tag = TokenTag.NONE;
 					}
-					else if ( current.equals("Endfunc"))
+					else if ( current.equalsIgnoreCase("Endfunc"))
 					{
 						// add 'Endfunc' token
 						tokens.add(new Token(current, TokenTag.ENDFUNC));

@@ -1,0 +1,29 @@
+// Some loops that print things. Kind of a multiplication table
+// sort of thing. Among other things, this will see if you can
+// pass multiple parameters to functions.
+
+func across( a, b )
+	local = 0;
+foo:	if ( ge( local, a ) ) to endit;
+	temp = local * b;
+	write( temp );
+	local = local + 1;
+	if ( true ) to foo;
+endit:	temp = 0; // "skip"
+endfunc
+
+
+
+func main()
+	write( "Enter a number:" );
+	read( X );
+	i = 0;
+loop:	if ( ge( i, x ) ) to done;
+    write( "====" );
+	dummy = across( i, x );
+	i = i + 1;
+	if ( true ) to loop;
+done:	write( "We counted to that number!" );
+    write( "=====" );
+endfunc
+

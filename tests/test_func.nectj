@@ -1,0 +1,42 @@
+// A test file using a function. If you did not get functions working,
+// then obviously you would not be using this example.
+// This also calculates the area of a circle. Not very well, but...
+
+// Start here!
+func main()
+    PIresult=makepi();
+    write( PIresult );
+    write("Enter the diameter of a circle: ");
+    read( diam );
+    area=doarea(diam,PIresult);
+    write( "Area is: " ); write( area );
+endfunc
+
+// Returns (roughly) pi times 10,000. Since we don't have
+// floating point, this is just a scaled version...
+func makepi()
+    num = 2;
+    denom = 1;
+    result = 200000;
+    i=0; max=100;
+  again: 
+    if ( gt(i,max) ) 
+        to done;
+    result = result * num / denom;
+    denom = denom + 2;
+    result = result * num / denom;
+    num = num + 2;
+    i = i + 1;
+    if ( true ) to again;
+
+  done:
+    makepi = result;
+endfunc
+
+func doarea( dia, scaledpi )
+    rad = dia / 2;
+    a = rad * rad * scaledpi;
+    a = a / 100000;
+    doarea = a;
+endfunc
+

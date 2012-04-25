@@ -1,0 +1,20 @@
+// Integer square root
+Func sqrt( num )
+        n = 0;
+        If ( eQ( num, n ) ) to endit;
+        N = num / 2 + 1; // starting estimate
+        N1 = ( n + ( num / n ) ) / 2;
+again:  iF ( GE( n1, n ) ) to endit;
+        n = n1;
+        n1 = ( n + ( num / n ) ) / 2;
+        if ( true ) to again;
+endit:  sqrt = n;
+endfunc
+
+func main()
+    write( "Enter a number:" );
+    read( X );
+    S = sqrt( x );
+    Write( "The square root is:" );
+    Write( s );
+Endfunc
